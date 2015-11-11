@@ -24,7 +24,6 @@ window.onload = function () {
             }
             else if(value=="=") {
             	var sum = stack[0];
-            	expressVal = expressVal + displayVal;
 				stack.push(parseFloat(displayVal));
             	for(var i = 0; i < stack.length; i++) {
             		if(!/^[0-9]+$/.test(stack[i])) {
@@ -41,45 +40,48 @@ window.onload = function () {
             				for(var j = 0; j < stack[i+1]-1; j++) {
             					sum = sum * stack[0];
             				}
-            			}
+            			}          			
             			
             		}
 
             	}
+            	if (expressVal=="0") {
+        			expressVal = "";
+        		}
+            	expressVal = expressVal + displayVal;
             	displayVal = sum;
             }
+			else if(value=="!") {
+				stack.push(factorial(displayVal));	
+				displayVal = displayVal + value;
+			}              
             else {
-            	if(displayVal!="0") {
-            		if (expressVal=="0") {
-            			expressVal = "";
-            		}
-            		expressVal = expressVal + displayVal + value;
-            		
-            		if(stack[stack.length-1]=="*" || stack[stack.length-1]=="/" || stack[stack.length-1]=="^") {
-            			highPriorityCalculator(stack, displayVal);
-            		}
-            		else if(stack[stack.length-1]=="!") {
-            			factorial(stack);
-            		}
-            		stack.push(parseFloat(displayVal));
-            		stack.push(value);
-            		displayVal = "0";
-
-            	}
+        		if (expressVal=="0") {
+        			expressVal = "";
+        		}
+        		if (expressVal.charAt(expressVal.length-1) == "!") {
+        			displayVal = "";
+        		}
+        		expressVal = expressVal + displayVal + value;
+        		
+        		if(stack[stack.length-1]=="*" || stack[stack.length-1]=="/" || stack[stack.length-1]=="^") {
+        			highPriorityCalculator(stack, displayVal);
+        		}
+        		stack.push(parseFloat(displayVal));
+        		stack.push(value);
+        		displayVal = "0";
             }
 			document.getElementById('result').innerHTML = displayVal;
 			document.getElementById('expression').innerHTML = expressVal;
         };
     }
 };
-function factorial (x) {
-	x.pop();
-	var f_num = x.pop();
-	var sum = 0
-	for(var i=1; i<=f_num; i++) {
-		sum = sum * i;
+function factorial(x) {
+	var mul = 1;
+	for(var i=1; i<=x; i++) {
+		mul = mul * i;
 	}
-	x.push(sum);
+	return mul;
 
 }
 function highPriorityCalculator(s, val) {
