@@ -23,6 +23,9 @@ window.onload = function () {
             	displayVal = displayVal + value;
             }
             else if(value=="=") {
+        		if(stack[stack.length-1]=="*" || stack[stack.length-1]=="/" || stack[stack.length-1]=="^") {
+        			highPriorityCalculator(stack, displayVal);
+        		}
             	var sum = stack[0];
 				stack.push(parseFloat(displayVal));
             	for(var i = 0; i < stack.length; i++) {
@@ -52,21 +55,28 @@ window.onload = function () {
             	displayVal = sum;
             }
 			else if(value=="!") {
-				stack.push(factorial(displayVal));	
-				displayVal = displayVal + value;
+				if (expressVal=="0") {
+        			expressVal = "";
+        		}
+        		expressVal = expressVal + displayVal + value;  
+				displayVal = factorial(displayVal);
 			}              
             else {
         		if (expressVal=="0") {
         			expressVal = "";
         		}
-        		if (expressVal.charAt(expressVal.length-1) == "!") {
-        			displayVal = "";
-        		}
-        		expressVal = expressVal + displayVal + value;
         		
+        		if (expressVal.charAt(expressVal.length-1)=="!") {
+        			expressVal = expressVal + value;
+        		}
+        		else {
+        			expressVal = expressVal + displayVal + value; 
+        		}
+        		   		
         		if(stack[stack.length-1]=="*" || stack[stack.length-1]=="/" || stack[stack.length-1]=="^") {
         			highPriorityCalculator(stack, displayVal);
         		}
+        		
         		stack.push(parseFloat(displayVal));
         		stack.push(value);
         		displayVal = "0";
@@ -94,7 +104,11 @@ function highPriorityCalculator(s, val) {
 		s.push(num1/parseFloat(val));
 	}
 	else {
-		s.push(num1^parseFloat(val));
+		var mul = 1;
+		for(var i = 1; i <= val; i++) {
+			mul = mul * num1;
+		}		
+		s.push(mul);
 	}
 }
 
